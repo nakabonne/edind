@@ -8,36 +8,46 @@ import (
 	"strings"
 )
 
+// Editor is an editor for opening files
 type Editor struct {
-	Name string
+	Name  string
+	Flags []string
 }
 
-func NewEditor() (editor Editor, err error) {
+// NewEditor returns an Editor
+// TODO: エディターの選択肢増やせるようにする
+// TODO: 出力先指定出来るようにする
+func NewEditor() (editor *Editor, err error) {
 	env := GetEnv()
-	name := env["EDITOR"]
-	if name == "" {
-		//logError("Could not find $EDITOR")
-		name = detectEditor(env["PATH"])
-		if name == "" {
-			err = fmt.Errorf("Could not find a default editor in the PATH")
-			return editor, err
-		}
+	editor = &Editor{}
+	if name := env["EDITOR"]; name != "" {
+		editor.Name = name
+		return editor, nil
 	}
-	editor.Name = name
+
+	//logError("Could not find $EDITOR")
+	err = editor.DetectEditor(env["PATH"])
+	if err != nil {
+		return nil, err
+	}
 	return editor, nil
 }
 
 // Open opens the file with the given editor
-// TODO: エディターの選択肢増やせるようにする
-// TODO: 出力先指定出来るようにする
 func (e *Editor) Open(path string) error {
 	// NOTE: bashの位置指定する場合
 	//run := fmt.Sprintf("%s %s", editor.Name, Escape(path))
 	//cmd := exec.Command(config.BashPath, "-c", run)
 
-	//cmd := exec.Command(e.Name, path)
-	cmd := exec.Command("open", "-t", "-W", path)
-	fmt.Println(e.Name, path)
+	var cmd *exec.Cmd
+	if len(e.Flags) >= 1 {
+		e.Flags = append(e.Flags, path)
+		cmd = exec.Command(e.Name, e.Flags...)
+	} else {
+		cmd = exec.Command(e.Name, path)
+	}
+
+	fmt.Println(e.Name, e.Flags, path)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -48,22 +58,26 @@ func (e *Editor) Open(path string) error {
 	return nil
 }
 
-var EDITORS = [][]string{
-	{"open", "-t", "-W"}, // Opens with the default text editor on mac
-	{"subl"},
-	{"vim"},
-	{"emacs"},
-	{"mate", "-w"},
-	{"nano"},
+var DefaultEditors = []Editor{
+	Editor{Name: "vim"},
+	Editor{Name: "emacs"},
+	Editor{Name: "nano"},
+	Editor{Name: "subl"},
+	Editor{Name: "atom"},
+	Editor{Name: "open", Flags: []string{"-t", "-W"}},
+	Editor{Name: "mate", Flags: []string{"-w"}},
 }
 
-func detectEditor(pathenv string) string {
-	for _, editor := range EDITORS {
-		if _, err := lookPath(editor[0], pathenv); err == nil {
-			return strings.Join(editor, " ")
+// DetectEditor detects executable editor commands from the given PATH
+func (e *Editor) DetectEditor(pathenv string) error {
+	for _, d := range DefaultEditors {
+		if _, err := lookPath(d.Name, pathenv); err == nil {
+			e.Name = d.Name
+			e.Flags = d.Flags
+			return nil
 		}
 	}
-	return ""
+	return fmt.Errorf("Could not find a default editor in the PATH")
 }
 
 func lookPath(file string, pathenv string) (string, error) {
