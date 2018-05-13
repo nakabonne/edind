@@ -55,7 +55,7 @@ func DetectEditor() (*Editor, error) {
 	return nil, fmt.Errorf("Could not find a default editor in the PATH")
 }
 
-// AddDefaults adds Editor to DefaultEditors
+// AddEditors adds choices to detect an executable editor
 func AddEditors(editors ...[]string) {
 	for _, e := range editors {
 		if len(e) > 1 {
