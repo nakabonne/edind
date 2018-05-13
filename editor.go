@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -26,12 +27,33 @@ func GetEditor() (editor Editor, err error) {
 	return editor, nil
 }
 
+// Open opens the file with the given editor
+// TODO: エディターの選択肢増やせるようにする
+// TODO: 出力先指定出来るようにする
+func (e *Editor) Open(path string) error {
+	// NOTE: bashの位置指定する場合
+	//run := fmt.Sprintf("%s %s", editor.Name, Escape(path))
+	//cmd := exec.Command(config.BashPath, "-c", run)
+
+	//cmd := exec.Command(e.Name, path)
+	cmd := exec.Command("open", "-t", "-W", path)
+	fmt.Println(e.Name, path)
+
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+	return nil
+}
+
 var EDITORS = [][]string{
+	{"open", "-t", "-W"}, // Opens with the default text editor on mac
 	{"subl"},
 	{"vim"},
 	{"emacs"},
 	{"mate", "-w"},
-	{"open", "-t", "-W"}, // Opens with the default text editor on mac
 	{"nano"},
 }
 
