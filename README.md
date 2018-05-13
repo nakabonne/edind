@@ -5,7 +5,10 @@
 
 edind is library for opening files with editor
 
-# Usage
+
+# Get Started
+
+## Usage
 
 ```go
 import "github.com/nakabonne/edind"
@@ -22,7 +25,7 @@ func main(){
 }
 ```
 
-# Installation
+## Installation
 
 ```
 $ go get -u github.com/nakabonne/edind
