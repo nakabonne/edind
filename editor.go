@@ -3,6 +3,7 @@ package edind
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -12,25 +13,31 @@ import (
 type Editor struct {
 	Name  string
 	Flags []string
+
+	Stdin  io.Reader
+	Stdout io.Writer
+	Stderr io.Writer
+}
+
+var DefaultEditors = []Editor{
+	Editor{Name: "vim"},
+	Editor{Name: "emacs"},
+	Editor{Name: "nano"},
+	Editor{Name: "subl"},
+	Editor{Name: "atom"},
+	Editor{Name: "open", Flags: []string{"-t", "-W"}},
+	Editor{Name: "mate", Flags: []string{"-w"}},
 }
 
 // NewEditor returns an Editor
 // TODO: エディターの選択肢増やせるようにする
-// TODO: 出力先指定出来るようにする
-func NewEditor() (editor *Editor, err error) {
-	env := GetEnv()
-	editor = &Editor{}
-	if name := env["EDITOR"]; name != "" {
-		editor.Name = name
-		return editor, nil
+func NewEditor() *Editor {
+	editor := &Editor{
+		Stdin:  os.Stdin,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
 	}
-
-	//logError("Could not find $EDITOR")
-	err = editor.DetectEditor(env["PATH"])
-	if err != nil {
-		return nil, err
-	}
-	return editor, nil
+	return editor
 }
 
 // Open opens the file with the given editor
@@ -49,29 +56,47 @@ func (e *Editor) Open(path string) error {
 
 	fmt.Println(e.Name, e.Flags, path)
 
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	cmd.Stdin = e.Stdin
+	cmd.Stdout = e.Stdout
+	cmd.Stderr = e.Stderr
 	if err := cmd.Run(); err != nil {
 		return err
 	}
 	return nil
 }
 
-var DefaultEditors = []Editor{
-	Editor{Name: "vim"},
-	Editor{Name: "emacs"},
-	Editor{Name: "nano"},
-	Editor{Name: "subl"},
-	Editor{Name: "atom"},
-	Editor{Name: "open", Flags: []string{"-t", "-W"}},
-	Editor{Name: "mate", Flags: []string{"-w"}},
+// SetStdin sets Standard input destination
+func (e *Editor) SetStdin(r io.Reader) {
+	e.Stdin = r
+}
+
+// SetStdout sets Standard output destination
+func (e *Editor) SetStdout(w io.Writer) {
+	e.Stdout = w
+}
+
+// SetStderr sets Standard error output destination
+func (e *Editor) SetStderr(w io.Writer) {
+	e.Stderr = w
+}
+
+// AddDefaults adds Editor to DefaultEditors
+func (e *Editor) AddDefaults(name string, flags ...string) {
+	DefaultEditors = append(DefaultEditors, Editor{Name: name, Flags: flags})
+	return
 }
 
 // DetectEditor detects executable editor commands from the given PATH
-func (e *Editor) DetectEditor(pathenv string) error {
+func (e *Editor) DetectEditor() error {
+	env := GetEnv()
+	if name := env["EDITOR"]; name != "" {
+		e.Name = name
+		return nil
+	}
+
+	pathEnv := env["PATH"]
 	for _, d := range DefaultEditors {
-		if _, err := lookPath(d.Name, pathenv); err == nil {
+		if _, err := lookPath(d.Name, pathEnv); err == nil {
 			e.Name = d.Name
 			e.Flags = d.Flags
 			return nil

@@ -2,8 +2,10 @@ package edind
 
 import "testing"
 
-func TestExampleSuccess(t *testing.T) {
-	editor, err := NewEditor()
+func TestOpen(t *testing.T) {
+	editor := NewEditor()
+	editor.AddDefaults("vi")
+	err := editor.DetectEditor()
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
