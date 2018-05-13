@@ -6,9 +6,9 @@
 edind is library for opening files with editor
 
 
-# Get Started
+## Get Started
 
-## Usage
+### Usage
 
 ```go
 import "github.com/nakabonne/edind"
@@ -25,8 +25,12 @@ func main(){
 }
 ```
 
-## Installation
+### Installation
 
 ```
 $ go get -u github.com/nakabonne/edind
 ```
+
+### License
+
+This library is licensed under the MIT License.
