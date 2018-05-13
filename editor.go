@@ -12,7 +12,7 @@ type Editor struct {
 	Name string
 }
 
-func GetEditor() (editor Editor, err error) {
+func NewEditor() (editor Editor, err error) {
 	env := GetEnv()
 	name := env["EDITOR"]
 	if name == "" {

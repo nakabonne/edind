@@ -3,11 +3,11 @@ package edind
 import "testing"
 
 func TestExampleSuccess(t *testing.T) {
-	editor, err := GetEditor()
+	editor, err := NewEditor()
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
-	err = Open(editor, "editor.go")
+	err = editor.Open("editor.go")
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
