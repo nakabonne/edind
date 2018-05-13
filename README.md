@@ -31,6 +31,21 @@ func main(){
 $ go get -u github.com/nakabonne/edind
 ```
 
+### Default Editors
+
+By default the following editors are used.
+If you want to add other editors to be detected, use [AddEditors](https://godoc.org/github.com/nakabonne/edind#AddEditors).
+
+```
+$ vim
+$ emacs
+$ nano
+$ subl
+$ atom
+$ open -t -W
+$ mate -w
+```
+
 ### License
 
 This library is licensed under the MIT License.
