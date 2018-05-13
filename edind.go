@@ -13,7 +13,7 @@ func Open(editor Editor, path string) error {
 	//run := fmt.Sprintf("%s %s", editor.Name, Escape(path))
 	//cmd := exec.Command(config.BashPath, "-c", run)
 
-	cmd := exec.Command(editor.Name, Escape(path))
+	cmd := exec.Command(editor.Name, path)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
