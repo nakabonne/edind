@@ -16,5 +16,5 @@ func main(){
 # Installation
 
 ```
-$ go get -u https://github.com/nakabonne/edind
+$ go get -u github.com/nakabonne/edind
 ```
