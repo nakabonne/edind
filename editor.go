@@ -30,14 +30,41 @@ var DefaultEditors = []Editor{
 	Editor{Name: "mate", Flags: []string{"-w"}},
 }
 
-// NewEditor returns an Editor
-func NewEditor() *Editor {
+// DetectEditor detects executable editor commands from the given PATH
+func DetectEditor() (*Editor, error) {
+	env := GetEnv()
 	editor := &Editor{
 		Stdin:  os.Stdin,
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
 	}
-	return editor
+
+	if name := env["EDITOR"]; name != "" {
+		editor.Name = name
+		return editor, nil
+	}
+
+	pathEnv := env["PATH"]
+	for _, d := range DefaultEditors {
+		if _, err := lookPath(d.Name, pathEnv); err == nil {
+			editor.Name = d.Name
+			editor.Flags = d.Flags
+			return editor, nil
+		}
+	}
+	return nil, fmt.Errorf("Could not find a default editor in the PATH")
+}
+
+// AddDefaults adds Editor to DefaultEditors
+func AddEditors(editors ...[]string) {
+	for _, e := range editors {
+		if len(e) > 1 {
+			DefaultEditors = append(DefaultEditors, Editor{Name: e[0], Flags: e[1:]})
+		} else if len(e) == 1 {
+			DefaultEditors = append(DefaultEditors, Editor{Name: e[0]})
+		}
+	}
+	return
 }
 
 // Open opens the file with the given editor
@@ -74,31 +101,6 @@ func (e *Editor) SetStdout(w io.Writer) {
 // SetStderr sets Standard error output destination
 func (e *Editor) SetStderr(w io.Writer) {
 	e.Stderr = w
-}
-
-// AddDefaults adds Editor to DefaultEditors
-func (e *Editor) AddDefaults(name string, flags ...string) {
-	DefaultEditors = append(DefaultEditors, Editor{Name: name, Flags: flags})
-	return
-}
-
-// DetectEditor detects executable editor commands from the given PATH
-func (e *Editor) DetectEditor() error {
-	env := GetEnv()
-	if name := env["EDITOR"]; name != "" {
-		e.Name = name
-		return nil
-	}
-
-	pathEnv := env["PATH"]
-	for _, d := range DefaultEditors {
-		if _, err := lookPath(d.Name, pathEnv); err == nil {
-			e.Name = d.Name
-			e.Flags = d.Flags
-			return nil
-		}
-	}
-	return fmt.Errorf("Could not find a default editor in the PATH")
 }
 
 func lookPath(file string, pathenv string) (string, error) {

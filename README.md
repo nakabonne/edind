@@ -8,8 +8,14 @@ edind is library for opening files with editor
 import "github.com/nakabonne/edind"
 
 func main(){
-  editor, _ := edind.GetEditor()
-	_ = edind.Open(editor, "editor.go")
+	edind.AddEditors(
+		[]string{"vi"},
+		[]string{"oni", "-w"},
+	)
+
+	editor, _ := edind.DetectEditor()
+
+	_ = editor.Open("editor.go")
 }
 ```
 

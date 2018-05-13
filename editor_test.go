@@ -3,11 +3,16 @@ package edind
 import "testing"
 
 func TestOpen(t *testing.T) {
-	editor := NewEditor()
-	err := editor.DetectEditor()
+	AddEditors(
+		[]string{"vi"},
+		[]string{"oni", "-w"},
+	)
+
+	editor, err := DetectEditor()
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
+
 	err = editor.Open("editor.go")
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
@@ -17,8 +22,7 @@ func TestOpen(t *testing.T) {
 func TestAddDefaultEditors(t *testing.T) {
 	before := len(DefaultEditors)
 
-	editor := NewEditor()
-	editor.AddDefaults("vi")
+	AddEditors([]string{"vi"})
 
 	after := len(DefaultEditors)
 
