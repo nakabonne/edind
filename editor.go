@@ -19,6 +19,7 @@ type Editor struct {
 	Stderr io.Writer
 }
 
+// DefaultEditors are detected editors
 var DefaultEditors = []Editor{
 	Editor{Name: "vim"},
 	Editor{Name: "emacs"},
@@ -30,7 +31,6 @@ var DefaultEditors = []Editor{
 }
 
 // NewEditor returns an Editor
-// TODO: エディターの選択肢増やせるようにする
 func NewEditor() *Editor {
 	editor := &Editor{
 		Stdin:  os.Stdin,
@@ -42,10 +42,6 @@ func NewEditor() *Editor {
 
 // Open opens the file with the given editor
 func (e *Editor) Open(path string) error {
-	// NOTE: bashの位置指定する場合
-	//run := fmt.Sprintf("%s %s", editor.Name, Escape(path))
-	//cmd := exec.Command(config.BashPath, "-c", run)
-
 	var cmd *exec.Cmd
 	if len(e.Flags) >= 1 {
 		e.Flags = append(e.Flags, path)
