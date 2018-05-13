@@ -77,8 +77,6 @@ func (e *Editor) Open(path string) error {
 		cmd = exec.Command(e.Name, path)
 	}
 
-	fmt.Println(e.Name, e.Flags, path)
-
 	cmd.Stdin = e.Stdin
 	cmd.Stdout = e.Stdout
 	cmd.Stderr = e.Stderr

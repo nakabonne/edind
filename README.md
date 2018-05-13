@@ -3,7 +3,7 @@
 [![Godoc](http://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/nakabonne/edind)
 [![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/nakabonne/edind/master/LICENSE)
 
-edind is library for opening files with editor
+edind is library for opening files and directories with editor
 
 
 ## Get Started
