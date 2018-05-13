@@ -45,7 +45,7 @@ const (
 	DEL           = 127
 )
 
-func Escape(str string) string {
+func escape(str string) string {
 	if str == "" {
 		return "''"
 	}
