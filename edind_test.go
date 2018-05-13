@@ -7,7 +7,7 @@ func TestExampleSuccess(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
-	Open(editor, "editor.go")
+	err = Open(editor, "editor.go")
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
