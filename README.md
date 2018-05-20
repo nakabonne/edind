@@ -34,7 +34,7 @@ $ go get -u github.com/nakabonne/edind
 ### Default Editors
 
 By default the following editors are used.
-If you want to add other editors to be detected, use [AddChoices](https://godoc.org/github.com/nakabonne/edind#AddEditors).
+If you want to add other editors to be detected, use [AddChoices](https://godoc.org/github.com/nakabonne/edind#EditorFactory.AddChoices).
 
 ```
 $ vim
