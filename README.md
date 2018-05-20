@@ -14,14 +14,14 @@ edind is library for opening files and directories with editor
 import "github.com/nakabonne/edind"
 
 func main(){
-	edind.AddEditors(
+	f := edind.NewEditorFactory()
+	f.AddChoices(
 		[]string{"vi"},
 		[]string{"oni", "-w"},
 	)
 
-	editor, _ := edind.DetectEditor()
-
-	_ = editor.Open("editor.go")
+	editor, _ := f.DetectEditor()
+	_ = editor.Open("sample.txt")
 }
 ```
 
@@ -34,7 +34,7 @@ $ go get -u github.com/nakabonne/edind
 ### Default Editors
 
 By default the following editors are used.
-If you want to add other editors to be detected, use [AddEditors](https://godoc.org/github.com/nakabonne/edind#AddEditors).
+If you want to add other editors to be detected, use [AddChoices](https://godoc.org/github.com/nakabonne/edind#AddEditors).
 
 ```
 $ vim

@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// EditorFactory is a factory that creates Editors.
 type EditorFactory struct {
 	Choices []Editor
 }
@@ -22,6 +23,7 @@ var DefaultEditors = []Editor{
 	Editor{Name: "mate", Flags: []string{"-w"}},
 }
 
+// NewEditorFactory returns a EditorFactory
 func NewEditorFactory() (f *EditorFactory) {
 	f = &EditorFactory{Choices: DefaultEditors}
 	return
@@ -52,7 +54,7 @@ func (f *EditorFactory) DetectEditor() (*Editor, error) {
 	return nil, fmt.Errorf("Could not find a default editor in the PATH")
 }
 
-// AddEditors adds choices to detect an executable editor
+// AddChoices adds choices to detect an executable editor
 func (f *EditorFactory) AddChoices(editors ...[]string) {
 	for _, e := range editors {
 		if len(e) > 1 {
@@ -64,7 +66,7 @@ func (f *EditorFactory) AddChoices(editors ...[]string) {
 	return
 }
 
-// ErrNotFound is the error resulting if a path search failed to find an executable file.
+// errNotFound is the error resulting if a path search failed to find an executable file.
 var errNotFound = errors.New("executable file not found in $PATH")
 
 func (f *EditorFactory) lookPath(file string, pathenv string) (string, error) {
