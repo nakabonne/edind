@@ -3,12 +3,13 @@ package edind
 import "testing"
 
 func TestOpen(t *testing.T) {
-	AddEditors(
+	f := NewEditorFactory()
+	f.AddChoices(
 		[]string{"vi"},
 		[]string{"oni", "-w"},
 	)
 
-	editor, err := DetectEditor()
+	editor, err := f.DetectEditor()
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
@@ -19,17 +20,18 @@ func TestOpen(t *testing.T) {
 	}
 }
 
-func TestAddDefaultEditors(t *testing.T) {
-	before := len(DefaultEditors)
+func TestAddChoices(t *testing.T) {
+	f := NewEditorFactory()
+	before := len(f.Choices)
 
-	AddEditors([]string{"vi"})
+	f.AddChoices([]string{"vi"})
 
-	after := len(DefaultEditors)
+	after := len(f.Choices)
 
 	if after != before+1 {
 		t.Fatalf("failed test")
 	}
-	if DefaultEditors[len(DefaultEditors)-1].Name != "vi" {
+	if f.Choices[len(f.Choices)-1].Name != "vi" {
 		t.Fatalf("failed test")
 	}
 }
