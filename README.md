@@ -42,6 +42,7 @@ $ emacs
 $ nano
 $ subl
 $ atom
+$ nvim
 $ open -t -W
 $ mate -w
 ```

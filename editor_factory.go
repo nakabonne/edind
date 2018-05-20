@@ -19,6 +19,7 @@ var DefaultEditors = []Editor{
 	Editor{Name: "nano"},
 	Editor{Name: "subl"},
 	Editor{Name: "atom"},
+	Editor{Name: "nvim"},
 	Editor{Name: "open", Flags: []string{"-t", "-W"}},
 	Editor{Name: "mate", Flags: []string{"-w"}},
 }
